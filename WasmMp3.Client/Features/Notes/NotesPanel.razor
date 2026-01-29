@@ -1,0 +1,96 @@
+﻿@using System.Text.Json
+@inject StorageService Storage
+
+@* vibrations *@
+@inject DeviceService Device
+
+
+<h2 class="mb-3">Notas rápidas (Offline)</h2>
+
+<div class="card p-3 mb-3">
+    <label class="form-label">Nova nota</label>
+
+    <textarea class="form-control" rows="3" @bind="newText"></textarea>
+
+    <div class="d-flex gap-2 mt-2">
+        <button class="btn btn-primary" @onclick="AddNote" disabled="@string.IsNullOrWhiteSpace(newText)">
+            Salvar
+        </button>
+        <button class="btn btn-outline-secondary" @onclick="ClearInput">
+            Limpar
+        </button>
+    </div>
+</div>
+
+@if (notes.Count == 0)
+{
+    <p>Nenhuma nota ainda. Crie a primeira 😈</p>
+}
+else
+{
+    <div class="d-flex flex-column gap-2">
+        @foreach (var n in notes.OrderByDescending(x => x.CreatedAt))
+        {
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="small text-muted">@n.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                        <div class="mt-2">@n.Text</div>
+                    </div>
+
+                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteNote(n.Id)">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    private const string StorageKey = "wasmmp3_notes_v1";
+
+    private string newText = "";
+    private List<NoteItem> notes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var json = await Storage.GetAsync(StorageKey);
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            notes = JsonSerializer.Deserialize<List<NoteItem>>(json) ?? new();
+        }
+    }
+
+    private async Task AddNote()
+    {
+        notes.Add(new NoteItem { Text = newText.Trim() });
+        newText = "";
+        await PersistAsync();
+
+        //vibração curta: ação positiva (salvou)
+        await Device.VibrateAsync(30);
+    }
+
+    private void ClearInput() => newText = "";
+
+    private async Task DeleteNote(Guid id)
+    {
+        var target = notes.FirstOrDefault(x => x.Id == id);
+        if (target is null) return;
+
+        notes.Remove(target);
+        await PersistAsync();
+
+        //vibração um pouco mais forte: ação destrutiva (excluiu)
+        await Device.VibrateAsync(60);
+
+    }
+
+    private async Task PersistAsync()
+    {
+        var json = JsonSerializer.Serialize(notes);
+        await Storage.SetAsync(StorageKey, json);
+    }
+}
