@@ -1,0 +1,50 @@
+﻿@using WasmMp3.Client.Features.Notes
+@using static WasmMp3.Client.Components.BottomNav
+
+<div class="app-shell-mobile">
+    <div class="app-main">
+        @* Header muda conforme a aba *@
+        @if (activeTab == TabKey.Notes)
+        {
+            <AppHeader Title="Notas" Subtitle="Offline + LocalStorage 😈" />
+            <MobilePage>
+                <NotesPanel />
+            </MobilePage>
+        }
+        else if (activeTab == TabKey.Offline)
+        {
+            <AppHeader Title="Offline" Subtitle="Status de conexão (próxima feature)" />
+            <MobilePage>
+                <div class="card-dark">
+                    <h3>Em breve</h3>
+                    <p>
+                        Aqui vamos colocar o componente <strong>OfflineStatus</strong>
+                        (online/offline) + cache de recursos do PWA.
+                    </p>
+                </div>
+            </MobilePage>
+        }
+        else
+        {
+            <AppHeader Title="Config" Subtitle="Preferências do app (placeholder)" />
+            <MobilePage>
+                <div class="card-dark">
+                    <h3>Configurações</h3>
+                    <p>Mais pra frente: tema, limpar notas, exportar, etc.</p>
+                </div>
+            </MobilePage>
+        }
+    </div>
+
+    <BottomNav ActiveTab="activeTab" ActiveTabChanged="OnTabChanged" />
+</div>
+
+@code {
+    private TabKey activeTab = TabKey.Notes;
+
+    private Task OnTabChanged(TabKey tab)
+    {
+        activeTab = tab;
+        return Task.CompletedTask;
+    }
+}

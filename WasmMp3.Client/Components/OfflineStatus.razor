@@ -1,0 +1,81 @@
+﻿@using WasmMp3.Client.Services
+
+@inject DeviceService Device
+@* // Injeta (via DI) um serviço seu chamado DeviceService.
+// A ideia é centralizar nele coisas do “dispositivo” (rede, vibração, etc.).
+// Aqui você vai usar o método IsOnlineAsync(). *@
+
+@inject IJSRuntime JS
+@* // Injeta o runtime de JavaScript do Blazor.
+// É isso que permite chamar funções JS a partir do C# (interop). *@
+
+<div class="offline-pill @(isOnline ? "online" : "offline")">
+    @* // Renderiza um "badge" (pill) com classe CSS dinâmica:
+    // se isOnline for true => adiciona "online", senão "offline". *@
+
+
+    @(isOnline ? "Online" : "Offline")
+    @* // Texto exibido na tela também é dinâmico. *@
+</div>
+
+@code {
+    private bool isOnline = true;
+    // Estado local do componente.
+    // Começa como true por padrão (pode ser só um valor inicial até checar de verdade).
+
+    private DotNetObjectReference<OfflineStatus>? objRef;
+    // Referência "segura" que permite o JavaScript chamar métodos deste componente.
+    // O tipo OfflineStatus é o nome do seu componente/classe (precisa bater com o nome real).
+    // O ? indica que pode ser null (ainda não foi criado).
+
+    protected override async Task OnInitializedAsync()
+    // Método do ciclo de vida do componente.
+    // Executa quando o componente está inicializando (antes de renderizar completamente).
+    // Como você usa await, precisa ser async e retornar Task.
+    {
+        isOnline = await Device.IsOnlineAsync();
+        // Pergunta ao DeviceService se está online.
+        // Isso define o estado inicial baseado na condição real da rede.
+
+        objRef = DotNetObjectReference.Create(this);
+        // Cria uma referência para "este" componente (this) que pode ser passada ao JS.
+        // Sem isso, você não consegue o JS chamando método C# [JSInvokable] daqui.
+
+        await JS.InvokeVoidAsync("device.onOnline", objRef);
+        // Chama uma função JavaScript chamada device.onOnline(...)
+        // e envia o objRef como parâmetro.
+        // Geralmente essa função JS registra listeners do navegador:
+        // window.addEventListener("online"/"offline") e, quando mudar,
+        // chama de volta o C# via objRef.
+    }
+
+    [JSInvokable]
+    // Atributo obrigatório para permitir que o JavaScript invoque este método C#.
+    // Sem isso, o JS não consegue chamar OnOnlineChanged.
+    public Task OnOnlineChanged(bool value)
+    // Método que será chamado pelo JavaScript quando o status online/offline mudar.
+    // value deve vir do JS (true = online, false = offline).
+    {
+        isOnline = value;
+        // Atualiza o estado do componente com o valor recebido do JS.
+
+        StateHasChanged();
+        // Força o Blazor a re-renderizar o componente.
+        // Sem isso, a UI pode não atualizar imediatamente após a mudança de estado.
+
+        return Task.CompletedTask;
+        // Retorna uma Task já concluída.
+        // É útil quando o método precisa ter assinatura assíncrona (Task),
+        // mas você não precisa usar await aqui.
+    }
+
+    public void Dispose()
+    // Método de "limpeza" (cleanup).
+    // Ele é usado para liberar recursos quando o componente é destruído/removido da tela.
+    // OBS: para o Blazor chamar automaticamente, o componente precisa implementar IDisposable.
+    {
+        objRef?.Dispose();
+        // Se objRef não for null, libera a referência.
+        // Isso evita vazamento de memória (especialmente importante em JS interop).
+    }
+}

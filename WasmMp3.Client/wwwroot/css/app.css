@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -113,3 +113,176 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+
+
+/* ============================
+   MOBILE APP SHELL (PWA)
+   ============================ */
+
+:root {
+    --bg: #0b1020;
+    --panel: #111a33;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #fbbf24;
+    --border: rgba(255,255,255,0.08);
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* container geral */
+.app-shell-mobile {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* safe areas (iOS) */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* área principal (conteúdo) */
+.app-main {
+    flex: 1;
+    overflow: auto;
+    padding: 16px 16px 90px; /* espaço para bottom nav */
+}
+
+/* header */
+.app-header {
+    margin-bottom: 14px;
+}
+
+.app-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-header h1 {
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.app-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .75rem;
+    letter-spacing: 0.5px;
+}
+
+.app-header-subtitle {
+    margin: 6px 0 0;
+    color: var(--muted);
+}
+
+/* página 100vh (tipo screen) */
+.mobile-page {
+    min-height: calc(100vh - 180px);
+}
+
+.mobile-page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* cards dark */
+.card-dark {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+/* Bottom Nav fixo */
+.bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 74px;
+    background: rgba(17, 26, 51, 0.92);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 84px;
+    padding: 8px 10px;
+    border-radius: 14px;
+}
+
+    .bottom-nav-btn .icon {
+        font-size: 1.25rem;
+    }
+
+    .bottom-nav-btn .text {
+        font-size: 0.75rem;
+    }
+
+    .bottom-nav-btn.active {
+        color: var(--accent);
+        background: rgba(251, 191, 36, 0.12);
+        border: 1px solid rgba(251, 191, 36, 0.22);
+    }
+
+/* Ajustar forms para dark (textarea etc) */
+textarea.form-control,
+input.form-control,
+select.form-select {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+    textarea.form-control:focus,
+    input.form-control:focus,
+    select.form-select:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.15);
+        border-color: rgba(251, 191, 36, 0.35);
+    }
+
+
+/*    componente pill*/
+.offline-pill {
+    margin-left: auto;
+    font-size: .75rem;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+}
+
+    .offline-pill.online {
+        color: #34d399;
+        background: rgba(52, 211, 153, 0.08);
+        border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    .offline-pill.offline {
+        color: #f87171;
+        background: rgba(248, 113, 113, 0.08);
+        border-color: rgba(248, 113, 113, 0.25);
+    }
