@@ -1,0 +1,39 @@
+﻿@inject DeviceService Device
+
+<h1>Captura de Foto</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h5>1. Visualização em Tempo Real</h5>
+        <video id="videoFeed" width="100%" style="border: 2px solid #ccc; border-radius: 8px;"></video>
+
+        <button class="btn btn-primary mt-2" @onclick="IniciarCamera">Iniciar Câmera</button>
+        <button class="btn btn-success mt-2" @onclick="CapturarFoto">Tirar Foto</button>
+    </div>
+
+    <div class="col-md-6">
+        <h5>2. Resultado (Canvas)</h5>
+        <canvas id="fotoCanvas" style="display:none;"></canvas>
+
+        @if (!string.IsNullOrEmpty(fotoUrl))
+        {
+            <img src="@fotoUrl" width="100%" style="border: 2px solid #28a745; border-radius: 8px;" />
+            <a href="@fotoUrl" download="minha-foto.png" class="btn btn-info mt-2">Salvar Foto</a>
+        }
+    </div>
+</div>
+
+@code {
+    private string? fotoUrl;
+
+    private async Task IniciarCamera()
+    {
+        await Device.StartVideoAsync("videoFeed");
+    }
+
+    private async Task CapturarFoto()
+    {
+        fotoUrl = await Device.TakePictureAsync("videoFeed", "fotoCanvas");
+    }  
+
+}

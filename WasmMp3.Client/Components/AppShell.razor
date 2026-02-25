@@ -1,5 +1,6 @@
-﻿@using WasmMp3.Client.Features.Notes
-@using static WasmMp3.Client.Components.BottomNav
+﻿@using WasmMp3.Client.Features.Gps
+@using WasmMp3.Client.Features.Notes
+
 
 <div class="app-shell-mobile">
     <div class="app-main">
@@ -9,6 +10,14 @@
             <AppHeader Title="Notas" Subtitle="Offline + LocalStorage 😈" />
             <MobilePage>
                 <NotesPanel />
+            </MobilePage>
+        }else if (activeTab == TabKey.GPS)
+        {
+            <AppHeader Title="GPS" Subtitle="Geolocalização 🗺️" />
+            <MobilePage>
+                <div class="card-dark">
+                    <GpsPanel />
+                </div>
             </MobilePage>
         }
         else if (activeTab == TabKey.Offline)

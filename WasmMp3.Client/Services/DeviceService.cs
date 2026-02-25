@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using WasmMP3.Client.Features.Gps;
 
 namespace WasmMp3.Client.Services;
 
@@ -25,5 +26,16 @@ public class DeviceService
 
     public ValueTask<int> getLevel()
     => _js.InvokeAsync<int>("battery.getLevel");
+
+    //GPS
+    public ValueTask<Localizacao> GetGeoLocazitionAsync()
+        => _js.InvokeAsync<Localizacao>("gps.getLocation");
+
+    //camera
+    public ValueTask StartVideoAsync(string videoElementId)
+        => _js.InvokeVoidAsync("camera.startVideo", videoElementId);
+
+    public ValueTask<string> TakePictureAsync(string videoElementId, string canvasElementId)
+        => _js.InvokeAsync<string>("camera.takePicture", videoElementId, canvasElementId);
 
 }

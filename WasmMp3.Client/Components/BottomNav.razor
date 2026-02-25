@@ -1,8 +1,16 @@
-﻿<nav class="bottom-nav">
+﻿<h3>BottomNav</h3>
+
+<nav class="bottom-nav">
     <button class="bottom-nav-btn @(ActiveTab == TabKey.Notes ? "active" : "")"
             @onclick="() => Select(TabKey.Notes)">
         <span class="icon">📝</span>
         <span class="text">Notas</span>
+    </button>
+
+    <button class="bottom-nav-btn @(ActiveTab == TabKey.GPS ? "active" : "")"
+            @onclick="() => Select(TabKey.GPS)">
+        <span class="icon">📍</span>
+        <span class="text">GPS</span>
     </button>
 
     <button class="bottom-nav-btn @(ActiveTab == TabKey.Offline ? "active" : "")"
@@ -19,7 +27,7 @@
 </nav>
 
 @code {
-    public enum TabKey { Notes, Offline, Settings }
+    public enum TabKey { Notes, GPS, Offline, Settings }
 
     [Parameter] public TabKey ActiveTab { get; set; }
     [Parameter] public EventCallback<TabKey> ActiveTabChanged { get; set; }
