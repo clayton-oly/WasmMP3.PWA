@@ -63,7 +63,6 @@ window.battery = {
 };
 
 //GPS
-
 window.getGeolocation = () => {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {

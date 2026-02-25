@@ -1,4 +1,4 @@
-﻿namespace WasmMP3.Client.Features.Gps
+﻿namespace WasmMp3.Client.Features.Gps
 {
     public class Localizacao
     {
