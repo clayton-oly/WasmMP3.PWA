@@ -1,5 +1,6 @@
 ﻿@using WasmMp3.Client.Features.Gps
 @using WasmMp3.Client.Features.Notes
+@using WasmMp3.Client.Features.Camera
 
 
 <div class="app-shell-mobile">
@@ -17,6 +18,15 @@
             <MobilePage>
                 <div class="card-dark">
                     <GpsPanel />
+                </div>
+            </MobilePage>
+        }
+        else if (activeTab == TabKey.Camera)
+        {
+            <AppHeader Title="Camera" Subtitle="📷" />
+            <MobilePage>
+                <div class="card-dark">
+                    <CameraPanel />
                 </div>
             </MobilePage>
         }
