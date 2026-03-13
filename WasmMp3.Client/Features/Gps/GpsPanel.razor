@@ -5,47 +5,47 @@
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">@errorMessage</div>
+<div class="alert alert-danger">@errorMessage</div>
 }
 
 @if (location != null)
 {
-    <h5 class="card-title text-center">Sua Localização</h5>
-
+<h5 class="card-title text-center">Sua Localização</h5>
+    
     <div class="row justify-content-center mb-3">
-
-        <div class="col-12 col-md-8 col-lg-6">
-
+        
+        <div class="col-12 col-md-8 col-lg-6"> 
+            
             <div class="ratio ratio-16x9">
                 <iframe frameborder="0" style="border-radius:10px"
                         src="https://maps.google.com/maps?q=@location.Latitude.ToString().Replace(",", "."),@location.Longitude.ToString().Replace(",", ".")&z=15&output=embed"
                         allowfullscreen></iframe>
             </div>
-
+            
         </div>
     </div>
 
 }
 else
 {
-    <p><em>Clique no botão para obter sua posição...</em></p>
+<p><em>Clique no botão para obter sua posição...</em></p>
 }
 
 <button class="btn btn-success mt-3" @onclick="GetLocation">Capturar Localização</button>
 
 @code {
-    private Localizacao? location;
-    private string? errorMessage;
+private Localizacao? location;
+private string? errorMessage;
 
-    private async Task GetLocation()
-    {
-        try
-        {
-            location = await Device.GetGeoLocalizationAsync();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Erro ao acessar GPS: {ex.Message}";
-        }
-    }
+private async Task GetLocation()
+{
+try
+{
+location = await Device.GetGeoLocalizationAsync();
+}
+catch (Exception ex)
+{
+errorMessage = $"Erro ao acessar GPS: {ex.Message}";
+}
+}
 }

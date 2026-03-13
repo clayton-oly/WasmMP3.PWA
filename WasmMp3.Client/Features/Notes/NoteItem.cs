@@ -1,4 +1,4 @@
-﻿namespace WasmMp3.Client.Features.Notes
+﻿namespace WasmMP3.Client.Features.Notes
 {
     public class NoteItem
     {
@@ -7,4 +7,3 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
- 

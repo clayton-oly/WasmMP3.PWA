@@ -1,11 +1,15 @@
-﻿<section class="mobile-page">
-    <div class="mobile-page-content">
-        @ChildContent
-    </div>
+﻿<h3>MobilePage</h3>
+
+
+<section class="mobile-page">
+    <div class="mobile-page-content">@ChildContent</div>
+
 </section>
 
+
+
 @code {
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
 }
-
-

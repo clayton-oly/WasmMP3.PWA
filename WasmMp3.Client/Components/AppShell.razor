@@ -1,7 +1,6 @@
-﻿@using WasmMp3.Client.Features.Gps
-@using WasmMp3.Client.Features.Notes
-@using WasmMp3.Client.Features.Camera
-
+﻿@using WasmMP3.Client.Features.Camera
+@using WasmMP3.Client.Features.Gps
+@using WasmMP3.Client.Features.Notes
 
 <div class="app-shell-mobile">
     <div class="app-main">
@@ -27,6 +26,15 @@
             <MobilePage>
                 <div class="card-dark">
                     <CameraPanel />
+                </div>
+            </MobilePage>
+        }
+        else if (activeTab == TabKey.NativeCamera)
+        {
+            <AppHeader Title="Camera Nativa" Subtitle="📸" />
+            <MobilePage>
+                <div class="card-dark">
+                    <CameraNativaPanel />
                 </div>
             </MobilePage>
         }

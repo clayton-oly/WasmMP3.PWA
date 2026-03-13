@@ -4,27 +4,28 @@
 @* vibrations *@
 @inject DeviceService Device
 
+@* Injeção do JavaScript para usar o confirm *@
+@inject IJSRuntime JS
+
 
 <h2 class="mb-3">Notas rápidas (Offline)</h2>
 
-<div class="card p-3 mb-3">
+<div class="card p-3">
     <label class="form-label">Nova nota</label>
 
     <textarea class="form-control" rows="3" @bind="newText"></textarea>
 
-    <div class="d-flex gap-2 mt-2">
+    <div class="d-flex flex-wrap gap-2 mt-2">
         <button class="btn btn-primary" @onclick="AddNote" disabled="@string.IsNullOrWhiteSpace(newText)">
             Salvar
         </button>
         <button class="btn btn-outline-secondary" @onclick="ClearInput">
             Limpar
         </button>
-        <button class="btn btn-outline-info" @onclick="Paste">
-            Colar
-        </button>
-        <button class="btn btn-outline-info" @onclick="Battery">
-            Bateria
-        </button>
+        <button class="btn btn-outline-info" @onclick="Paste">Colar</button>
+
+        <button class="btn btn-outline-warning" @onclick="GetBattery">Bateria</button>
+
     </div>
 </div>
 
@@ -36,23 +37,27 @@ else
 {
     <div class="d-flex flex-column gap-2">
         @foreach (var n in notes.OrderByDescending(x => x.CreatedAt))
-        {
-            <div class="card p-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="small text-muted">@n.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
-                        <div class="mt-2">@n.Text</div>
-                    </div>
-
-                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteNote(n.Id)">
-                        Excluir
-                    </button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => Copy(n.Text)">
-                        Copiar
-                    </button>
-                </div>
+{
+    <div class="card p-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+            
+            <div class="flex-grow-1 text-break">
+                <div class="small text-muted">@n.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                <div class="mt-2">@n.Text</div>
             </div>
-        }
+
+            <div class="d-flex gap-2 mt-sm-0 mt-2">
+                <button class="btn btn-sm btn-outline-danger flex-fill" @onclick="() => DeleteNote(n.Id)">
+                    Excluir
+                </button>
+                <button class="btn btn-sm btn-outline-primary flex-fill" @onclick="() => Copy(n.Text)">
+                    Copiar
+                </button>
+            </div>
+
+        </div>
+    </div>
+}
     </div>
 }
 
@@ -78,23 +83,29 @@ else
         await PersistAsync();
 
         //vibração curta: ação positiva (salvou)
-        await Device.VibrateAsync(30);
+        await Device.VibrateAsync(5000);
     }
 
     private void ClearInput() => newText = "";
 
     private async Task DeleteNote(Guid id)
-    {
-        var target = notes.FirstOrDefault(x => x.Id == id);
-        if (target is null) return;
+{
+    // 1. Pergunta ao usuário antes de fazer qualquer coisa
+    bool confirmado = await JS.InvokeAsync<bool>("confirm", "Tem certeza que deseja excluir esta nota?");
 
-        notes.Remove(target);
-        await PersistAsync();
+    // 2. Se ele clicar em "Cancelar", paramos por aqui
+    if (!confirmado) return;
 
-        //vibração um pouco mais forte: ação destrutiva (excluiu)
-        await Device.VibrateAsync(60);
+    // 3. Se ele clicou em "OK", segue o fluxo normal de exclusão
+    var target = notes.FirstOrDefault(x => x.Id == id);
+    if (target is null) return;
 
-    }
+    notes.Remove(target);
+    await PersistAsync();
+    
+    // vibração um pouco mais forte: ação destrutiva (excluiu)
+    await Device.VibrateAsync(5000); 
+}
 
     private async Task PersistAsync()
     {
@@ -104,20 +115,30 @@ else
 
     private async Task Paste()
     {
-        //lendo texto do clipboard (área de transferência)  
+        //lendo texto do clipboard
         newText = await Device.ReadTextAsync();
     }
 
     private async Task Copy(string txt)
     {
-        //escreve texto no clipboard (área de transferência)
+        //escrevendo texto do clipboard
         await Device.CopyTextAsync(txt);
-    } 
+    }
 
-    private async Task Battery()
+    private async Task GetBattery()
     {
-        var level = await Device.getLevel();
-        newText = $"Bateria: {level}%";
+        var level = await Device.GetBatteryLevelAsync();
+
+        // O script JS retorna -1 se a API não for suportada
+        if (level < 0)
+        {
+            newText = "Não foi possível ler o nível da bateria. Ou se estiver utilizando a função no iOS, não é suportado.";
+        }
+        else
+        {
+          
+            newText = $"Sua bateria está em {level:F0}%";
+        }
     }
 
 }

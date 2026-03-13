@@ -1,36 +1,49 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.EntityFrameworkCore;
+using MP3.API.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-
-// CORS: permitir requisições do cliente PWA (desenvolvimento e produção)
-builder.Services.AddCors(options =>
+//Inicialize the firebase app
+FirebaseApp.Create(new AppOptions()
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    Credential = GoogleCredential.FromFile("Firebase/mp3-pwa-firebase-adminsdk-fbsvc-c69fa54b22.json")
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-//builder.Services.AddOpenApi();
+//Configura i SQLite
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddDbContext<MP3DbContext>(options =>
+    options.UseSqlite("Data Source=pushnotifications.db"));
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
+
+
+//cors
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+{
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(); 
-    app.UseSwaggerUI(); 
-    //app.MapOpenApi();
+    //app.MapSwagger();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-// CORS deve vir antes de UseAuthorization e MapControllers
 app.UseCors();
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

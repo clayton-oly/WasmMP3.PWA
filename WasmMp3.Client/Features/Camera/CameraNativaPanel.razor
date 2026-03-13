@@ -1,0 +1,80 @@
+﻿@inject HttpClient Http
+
+<h1>Captura de Foto - Câmera Nativa</h1>
+
+<div class="card p-3">
+    <h5>1. Selecionar ou Tirar Foto</h5>
+    <InputFile OnChange="HandleFileSelected" accept="image/*" capture="user" class="form-control" />
+
+    <input type="text" @bind="name" placeholder="nome do arquivo" class="form-control" /> 
+    <input type="text" @bind="folder" placeholder="nome da pasta" class="form-control" /> 
+
+
+    @if (previewUrl != null)
+    {
+        <div class="mt-3">
+            <h5>2. Pré-visualização</h5>
+            <img src="@previewUrl" class="img-thumbnail" style="max-width: 300px;" />
+        </div>
+
+        <button class="btn btn-primary mt-2" @onclick="UploadFoto" disabled="@isUploading">
+            @(isUploading ? "Salvando..." : "Salvar no Servidor")
+        </button>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(mensagem))
+{
+    <div class="alert alert-info mt-3">@mensagem</div>
+}
+
+@code {
+    private string? previewUrl;
+    private IBrowserFile? selectedFile;
+    private bool isUploading = false;
+    private string? mensagem;
+    private string name = "";
+    private string folder = "";
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+
+        // Criar uma URL de preview local para o aluno ver a foto antes de enviar
+        var buffer = new byte[selectedFile.Size];
+        await selectedFile.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).ReadAsync(buffer);
+        previewUrl = $"data:{selectedFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
+    }
+
+    private async Task UploadFoto()
+    {
+        if (selectedFile == null) return;
+
+        isUploading = true;
+        mensagem = "Enviando...";
+
+        // Enviando como MultipartFormData (forma mais comum para arquivos reais)
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(selectedFile.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5));
+        content.Add(fileContent, "Arquivo", selectedFile.Name);
+
+        //passando campos de texto
+        content.Add(new StringContent(name), "Nome");
+        content.Add(new StringContent(folder), "Pasta");
+
+        // Não esquecer de mudar a Url da API
+        var urlApi = "https://z3csdb61-5096.brs.devtunnels.ms";
+        var response = await Http.PostAsync(urlApi + "/api/fotos/upload-form", content);
+
+        if (response.IsSuccessStatusCode)
+            mensagem = "Foto enviada com sucesso!";
+        else
+            mensagem = "Erro no upload.";
+
+        isUploading = false;
+    }
+
+
+
+
+}

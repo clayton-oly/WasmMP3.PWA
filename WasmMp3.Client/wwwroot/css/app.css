@@ -148,11 +148,11 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ?rea principal (conte?do) */
+/* área principal (conteúdo) */
 .app-main {
     flex: 1;
     overflow: auto;
-    padding: 16px 16px 90px; /* espa?o para bottom nav */
+    padding: 16px 16px 90px; /* espaço para bottom nav */
 }
 
 /* header */
@@ -186,7 +186,7 @@ body {
     color: var(--muted);
 }
 
-/* p?gina 100vh (tipo screen) */
+/* página 100vh (tipo screen) */
 .mobile-page {
     min-height: calc(100vh - 180px);
 }
@@ -253,7 +253,7 @@ textarea.form-control,
 input.form-control,
 select.form-select {
     background: rgba(255,255,255,0.06);
-    /*    color: var(--text);*/
+/*    color: var(--text);*/
     border: 1px solid var(--border);
 }
 
@@ -287,16 +287,16 @@ select.form-select {
         border-color: rgba(248, 113, 113, 0.25);
     }
 
-/* Classe espec?fica para textareas em fundos claros */
+/* Classe específica para textareas em fundos claros */
 .textarea-claro {
     background-color: #f8f9fa !important; /* Fundo cinza bem claro */
-    border: 1px solid #ced4da !important; /* Borda cinza vis?vel do Bootstrap */
+    border: 1px solid #ced4da !important; /* Borda cinza visível do Bootstrap */
     color: #212529 !important; /* Texto escuro */
     min-height: 120px; /* Garante uma altura boa para digitar */
-    resize: vertical; /* Permite que o usu?rio aumente a caixa para baixo */
+    resize: vertical; /* Permite que o usuário aumente a caixa para baixo */
 }
 
-    /* Ajustando a cor do placeholder para ficar leg?vel */
+    /* Ajustando a cor do placeholder para ficar legível */
     .textarea-claro::placeholder {
         color: #6c757d !important;
     }

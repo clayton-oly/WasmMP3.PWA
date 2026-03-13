@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
-using WasmMp3.Client.Features.Gps;
+using WasmMP3.Client.Features.Gps;
 
-namespace WasmMp3.Client.Services;
+namespace WasmMP3.Client.Services;
 
 public class DeviceService
 {
@@ -17,25 +17,31 @@ public class DeviceService
     public ValueTask RegisterOnlineListenerAsync(IJSObjectReference dotNetObjRef)
         => _js.InvokeVoidAsync("device.onOnline", dotNetObjRef);
 
-    //metodos do CopyText (Clipboard)
+
+    //métodos do CopyText (Clipboard)
     public ValueTask<bool> CopyTextAsync(string txt)
-        => _js.InvokeAsync<bool>("clipboard.copyText", txt);
+    => _js.InvokeAsync<bool>("clipboard.copyText", txt);
 
     public ValueTask<string> ReadTextAsync()
-        => _js.InvokeAsync<string>("clipboard.readText");
+    => _js.InvokeAsync<string>("clipboard.readText");
 
-    public ValueTask<int> getLevel()
-    => _js.InvokeAsync<int>("battery.getLevel");
+    //métodos do BatteryLevel
+    public ValueTask<double> GetBatteryLevelAsync()
+        => _js.InvokeAsync<double>("battery.getLevel");
+
 
     //GPS
-    public ValueTask<Localizacao> GetGeoLocalizationAsync()
-        => _js.InvokeAsync<Localizacao>("gps.getLocation");
 
-    //camera
-    public ValueTask StartVideoAsync(string videoElementId)
-        => _js.InvokeVoidAsync("camera.startVideo", videoElementId);
+    public ValueTask<Localizacao> GetGeoLocalizationAsync()
+        => _js.InvokeAsync<Localizacao>("getGeolocation");
+
+    //câmera
+    public ValueTask StartVideoAsync(string videoElementId, bool useFrontCamera)
+        => _js.InvokeVoidAsync("camera.startVideo", videoElementId, useFrontCamera);
 
     public ValueTask<string> TakePictureAsync(string videoElementId, string canvasElementId)
         => _js.InvokeAsync<string>("camera.takePicture", videoElementId, canvasElementId);
 
+    public ValueTask StopVideoAsync(string videoElementId)
+        => _js.InvokeVoidAsync("camera.stopVideo", videoElementId);
 }

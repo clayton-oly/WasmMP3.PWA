@@ -1,4 +1,4 @@
-@MP3.API_HostAddress = http://localhost:5209
+@MP3.API_HostAddress = http://localhost:5026
 
 GET {{MP3.API_HostAddress}}/weatherforecast/
 Accept: application/json

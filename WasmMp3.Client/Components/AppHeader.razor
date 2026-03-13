@@ -1,5 +1,20 @@
-﻿<h3>AppHeader</h3>
+﻿<header class="app-header">
+    <div class="app-header-title">
+        <span class="app-badge">PWA</span>
+        <h1>@Title</h1>
+
+        @* component offline *@
+        <OfflineStatus />
+
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Subtitle))
+    {
+        <p class="app-header-subtitle">@Subtitle</p>
+    }
+</header>
 
 @code {
-
+    [Parameter] public string Title { get; set; } = "WasmMP3";
+    [Parameter] public string? Subtitle { get; set; }
 }

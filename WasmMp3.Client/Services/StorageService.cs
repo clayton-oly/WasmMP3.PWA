@@ -1,9 +1,10 @@
 ﻿using Microsoft.JSInterop;
 
-namespace WasmMp3.Client.Services
+namespace WasmMP3.Client.Services
 {
     public class StorageService
     {
+
         private readonly IJSRuntime _js;
 
         public StorageService(IJSRuntime js) => _js = js;
@@ -16,5 +17,6 @@ namespace WasmMp3.Client.Services
 
         public ValueTask RemoveAsync(string key)
             => _js.InvokeVoidAsync("deviceStorage.remove", key);
+
     }
 }
