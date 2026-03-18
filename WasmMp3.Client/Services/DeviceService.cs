@@ -31,7 +31,6 @@ public class DeviceService
 
 
     //GPS
-
     public ValueTask<Localizacao> GetGeoLocalizationAsync()
         => _js.InvokeAsync<Localizacao>("getGeolocation");
 
@@ -44,4 +43,8 @@ public class DeviceService
 
     public ValueTask StopVideoAsync(string videoElementId)
         => _js.InvokeVoidAsync("camera.stopVideo", videoElementId);
+
+    //push notification
+    public ValueTask<string> GetFCMTokenAsync(string vapidKey)
+    => _js.InvokeAsync<string>("push.getFCMToken", vapidKey);
 }

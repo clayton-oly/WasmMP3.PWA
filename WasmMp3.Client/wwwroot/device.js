@@ -130,5 +130,38 @@ window.camera = {
             window.currentStream = null;
         }
     }
+};
 
+//push notification
+window.push = {
+    getFCMToken: async (vapidKey) => {
+
+        try {
+            //aqui vai o seu firebaseConfig
+            const firebaseConfig = {
+                apiKey: "AIzaSyCqlTqaaT7tjQrRy4E23mgp0wYcLaAFXa0",
+                authDomain: "mp3-pwa.firebaseapp.com",
+                projectId: "mp3-pwa",
+                storageBucket: "mp3-pwa.firebasestorage.app",
+                messagingSenderId: "459762706933",
+                appId: "1:459762706933:web:a85325e54e9461155c98bc"
+            };
+
+            // Verifica se já existe um app inicializado, se não, inicializa
+            if (firebase.apps.length === 0) {
+                firebase.initializeApp(firebaseConfig);
+            }
+
+            const messaging = firebase.messaging();
+            const permission = await Notification.requestPermission();
+
+            if (permission === 'granted') {
+                return await messaging.getToken({ vapidKey: vapidKey });
+            }
+            return null;
+        } catch (error) {
+            console.error("Erro no Firebase JS:", error);
+            return null;
+        }
+    }
 };

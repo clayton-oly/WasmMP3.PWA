@@ -1,0 +1,46 @@
+﻿@inject HttpClient Http
+@inject DeviceService Device
+
+
+<h3>Push Notification</h3>
+
+<div class="card p-3 mb-3">
+    <input type="text" @bind="name" class="form-control" placeholder="Nome" />
+    <button class="btn btn-primary" @onclick="RequestNotification">Ativar Notificações</button>
+</div>
+
+@code {
+
+    private string name = "";
+
+    private async Task RequestNotification()
+    {
+        //Troque seu seu vapidKey do Firebase
+        var vapidKey = "BHIK8-tKg7Qg7FOH3XH6j2_jWKo_wNEges_JMWKoOSTRuDw2nOFe86QykcC0lvgGxgEbSQ8G3PYi7I9fbHsJlqg";
+
+        // Chame a função JS para pegar o token
+        var token = await Device.GetFCMTokenAsync(vapidKey);
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            // Envie este token para o seu Backend via HttpClient
+            // para salvá-lo no banco de dados associado ao usuário
+            Console.WriteLine($"Token FCM: {token}");
+        }
+
+        var model = new
+        {
+            Name = name ?? "Sem Nome",
+            Token = token
+        };
+
+        //Altere para o endereço da sua API
+        var urlApi = "https://kpbcgnlm-5176.brs.devtunnels.ms";
+        var response = await Http.PostAsJsonAsync(urlApi + "/api/notification/register", model);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Token registrado no SQLite com sucesso!");
+        }
+    }
+}

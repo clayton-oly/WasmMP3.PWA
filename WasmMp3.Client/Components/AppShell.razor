@@ -1,6 +1,7 @@
 ﻿@using WasmMP3.Client.Features.Camera
 @using WasmMP3.Client.Features.Gps
 @using WasmMP3.Client.Features.Notes
+@using WasmMP3.Client.Features.PushNotification
 
 <div class="app-shell-mobile">
     <div class="app-main">
@@ -55,10 +56,7 @@
         {
             <AppHeader Title="Config" Subtitle="Preferências do app (placeholder)" />
             <MobilePage>
-                <div class="card-dark">
-                    <h3>Configurações</h3>
-                    <p>Mais pra frente: tema, limpar notas, exportar, etc.</p>
-                </div>
+                <NotificationPanel />
             </MobilePage>
         }
     </div>

@@ -49,7 +49,7 @@ namespace MP3.API.Controllers
                 Notification = new Notification { Title = "Aviso Geral", Body = messageText }
             };
 
-            var result = await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
+            var result = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(message);
             return Ok(new { Enviados = result.SuccessCount, Falhas = result.FailureCount });
         }
 
